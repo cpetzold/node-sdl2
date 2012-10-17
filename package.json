@@ -1,0 +1,12 @@
+{
+  "name": "sdl2",
+  "version": "0.0.1",
+  "description": "NodeJS wrapper for SDL 2",
+  "author": "Conner Petzold <cpetzold@gmail.com> (http://connr.com)",
+  "repository": "",
+  "main": "index.js",
+  "scripts": {
+    "install": "node-gyp rebuild"
+  },
+  "license": "MIT"
+}
