@@ -1,20 +1,29 @@
 #include "basics.h"
 
-static void basics::init(Handle<Object> target) {
+void InitBasics(Handle<Object> target) {
   
   NODE_SET_METHOD(target, "init", Init);
 
+  target->Set(String::New("INIT_TIMER"), Integer::New(SDL_INIT_TIMER));
+  target->Set(String::New("INIT_AUDIO"), Integer::New(SDL_INIT_AUDIO));
+  target->Set(String::New("INIT_VIDEO"), Integer::New(SDL_INIT_VIDEO));
+  target->Set(String::New("INIT_JOYSTICK"), Integer::New(SDL_INIT_JOYSTICK));
+  target->Set(String::New("INIT_HAPTIC"), Integer::New(SDL_INIT_HAPTIC));
+  target->Set(String::New("INIT_EVERYTHING"), Integer::New(SDL_INIT_EVERYTHING));
+  target->Set(String::New("INIT_NOPARACHUTE"), Integer::New(SDL_INIT_NOPARACHUTE));
+
 }
 
-Handle<Value> basics::Init(const Arguments& args) {
+Handle<Value> Init(const Arguments& args) {
   HandleScope scope;
 
-  if (!(args.Length() == 1 && args[0]->IsNumber())) {
-    return ThrowException(Exception::TypeError(String::New("Invalid arguments: Expected init(flags)")));
+  if (args.Length() != 1 ||
+      !args[0]->IsUint32()) {
+    return ThrowUsageException("init(int flags)");
   }
 
   if (SDL_Init(args[0]->Int32Value()) < 0) {
-    return ThrowException(Exception::Error(String::New(SDL_GetError())));
+    return ThrowSDLException(__func__);
   }
 
   return Undefined();

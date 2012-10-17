@@ -11,13 +11,13 @@
 #include "files.h"
 
 extern "C" void init(Handle<Object> target) {
-  basics::init(target);
-  // events::init(target);
-  // video::init(target);
-  // audio::init(target);
-  // threads::init(target);
-  // timers::init(target);
-  // files::init(target);
+  InitBasics(target);
+  InitVideo(target);
+  // InitEvents(target);
+  // InitAudio(target);
+  // InitThreads(target);
+  InitTimers(target);
+  // InitFiles(target);
 }
 
 NODE_MODULE(sdl2, init);

@@ -4,9 +4,10 @@
   "description": "NodeJS wrapper for SDL 2",
   "author": "Conner Petzold <cpetzold@gmail.com> (http://connr.com)",
   "repository": "",
-  "main": "index.js",
+  "main": "build/Release/sdl2.node",
   "scripts": {
-    "install": "node-gyp rebuild"
+    "install": "node-gyp rebuild",
+    "test": "node test"
   },
   "license": "MIT"
 }
