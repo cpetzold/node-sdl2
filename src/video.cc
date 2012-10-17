@@ -3,6 +3,7 @@
 void InitVideo(Handle<Object> target) {
   
   NODE_SET_METHOD(target, "createWindow", CreateWindow);
+  NODE_SET_METHOD(target, "createRenderer", CreateRenderer);
 
   target->Set(String::New("INIT_TIMER"), Integer::New(SDL_INIT_TIMER));
   target->Set(String::New("INIT_AUDIO"), Integer::New(SDL_INIT_AUDIO));
@@ -12,6 +13,22 @@ void InitVideo(Handle<Object> target) {
   target->Set(String::New("INIT_EVERYTHING"), Integer::New(SDL_INIT_EVERYTHING));
   target->Set(String::New("INIT_NOPARACHUTE"), Integer::New(SDL_INIT_NOPARACHUTE));
 
+  target->Set(String::New("WINDOW_FULLSCREEN"), Integer::New(SDL_WINDOW_FULLSCREEN));
+  target->Set(String::New("WINDOW_OPENGL"), Integer::New(SDL_WINDOW_OPENGL));
+  target->Set(String::New("WINDOW_SHOWN"), Integer::New(SDL_WINDOW_SHOWN));
+  target->Set(String::New("WINDOW_BORDERLESS"), Integer::New(SDL_WINDOW_BORDERLESS));
+  target->Set(String::New("WINDOW_RESIZABLE"), Integer::New(SDL_WINDOW_RESIZABLE));
+  target->Set(String::New("WINDOW_MAXIMIZED"), Integer::New(SDL_WINDOW_MAXIMIZED));
+  target->Set(String::New("WINDOW_MINIMIZED"), Integer::New(SDL_WINDOW_MINIMIZED));
+  target->Set(String::New("WINDOW_INPUT_GRABBED"), Integer::New(SDL_WINDOW_INPUT_GRABBED));
+
+  target->Set(String::New("WINDOWPOS_UNDEFINED"), Integer::New(SDL_WINDOWPOS_UNDEFINED));
+  target->Set(String::New("WINDOWPOS_CENTERED"), Integer::New(SDL_WINDOWPOS_CENTERED));
+
+  target->Set(String::New("RENDERER_SOFTWARE"), Integer::New(SDL_RENDERER_SOFTWARE));
+  target->Set(String::New("RENDERER_ACCELERATED"), Integer::New(SDL_RENDERER_ACCELERATED));
+  target->Set(String::New("RENDERER_PRESENTVSYNC"), Integer::New(SDL_RENDERER_PRESENTVSYNC));
+  target->Set(String::New("RENDERER_TARGETTEXTURE"), Integer::New(SDL_RENDERER_TARGETTEXTURE));
 }
 
 Handle<Value> CreateWindow(const Arguments& args) {
@@ -19,12 +36,12 @@ Handle<Value> CreateWindow(const Arguments& args) {
 
   if (args.Length() != 6 ||
       !args[0]->IsString() ||
-      !args[1]->IsUint32() ||
-      !args[2]->IsUint32() ||
-      !args[3]->IsUint32() ||
-      !args[4]->IsUint32() ||
+      !args[1]->IsInt32() ||
+      !args[2]->IsInt32() ||
+      !args[3]->IsInt32() ||
+      !args[4]->IsInt32() ||
       !args[5]->IsUint32()) {
-    return ThrowUsageException("createWindow(string title, int x, int y, int w, int h, int flags)");
+    return ThrowUsageException("createWindow(string title, int x, int y, int w, int h, uint flags)");
   }
 
   String::Utf8Value title(args[0]);
@@ -68,45 +85,63 @@ void CreateWindowTemplate() {
   window_template = Persistent<ObjectTemplate>::New(ObjectTemplate::New());
   window_template->SetInternalFieldCount(1);
 
-  // window_template->SetAccessor(String::NewSymbol("id"), GetWindowID);
-  // window_template->SetAccessor(String::NewSymbol("title"), GetWindowTitle);
-  // window_template->SetAccessor(String::NewSymbol("x"), GetWindowX);
-  // window_template->SetAccessor(String::NewSymbol("y"), GetWindowY);
-  // window_template->SetAccessor(String::NewSymbol("w"), GetWindowW);
-  // window_template->SetAccessor(String::NewSymbol("h"), GetWindowH);
-  // window_template->SetAccessor(String::NewSymbol("flags"), GetWindowFlags);
+  scope.Close(Undefined());
+}
+
+Handle<Value> CreateRenderer(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 3 ||
+      !args[0]->IsObject() ||
+      !args[1]->IsInt32() ||
+      !args[2]->IsUint32()) {
+    return ThrowUsageException("createRenderer(window win, int index, uint flags)");
+  }
+
+  SDL_Window* window = UnwrapWindow(args[0]->ToObject());
+  int index = args[1]->Int32Value();
+  int flags = args[2]->Uint32Value();
+
+  SDL_Renderer* renderer = SDL_CreateRenderer(window, index, flags);
+
+  return scope.Close(WrapRenderer(renderer));
+}
+
+static Persistent<ObjectTemplate> renderer_template;
+
+Handle<Object> WrapRenderer(SDL_Renderer* renderer) {
+  CreateRendererTemplate();
+
+  HandleScope scope;
+
+  Handle<ObjectTemplate> templ = renderer_template;
+  Handle<Object> instance = templ->NewInstance();
+  Handle<External> pointer = External::New(renderer);
+  instance->SetInternalField(0, pointer);
+
+  return scope.Close(instance);
+}
+
+SDL_Renderer* UnwrapRenderer(Handle<Object> instance) {
+  Handle<External> pointer = Handle<External>::Cast(instance->GetInternalField(0));
+  return static_cast<SDL_Renderer*>(pointer->Value());
+}
+
+void CreateRendererTemplate() {
+  if (!renderer_template.IsEmpty()) return;
+
+  HandleScope scope;
+
+  renderer_template = Persistent<ObjectTemplate>::New(ObjectTemplate::New());
+  renderer_template->SetInternalFieldCount(1);
 
   scope.Close(Undefined());
 }
 
-// Handle<Value> GetWindowID(Local<String> name, const AccessorInfo& info) {
-//   SDL_Window* window = UnwrapWindow(info.Holder());
-//   return Integer::New(window->id);
-// }
-// Handle<Value> GetWindowTitle(Local<String> name, const AccessorInfo& info) {
-//   SDL_Window* window = UnwrapWindow(info.Holder());
-//   return String::New(window->title);
-// }
-// Handle<Value> GetWindowX(Local<String> name, const AccessorInfo& info) {
-//   SDL_Window* window = UnwrapWindow(info.Holder());
-//   return Integer::New(window->x);
-// }
-// Handle<Value> GetWindowY(Local<String> name, const AccessorInfo& info) {
-//   SDL_Window* window = UnwrapWindow(info.Holder());
-//   return Integer::New(window->y);
-// }
-// Handle<Value> GetWindowW(Local<String> name, const AccessorInfo& info) {
-//   SDL_Window* window = UnwrapWindow(info.Holder());
-//   return Integer::New(window->w);
-// }
-// Handle<Value> GetWindowH(Local<String> name, const AccessorInfo& info) {
-//   SDL_Window* window = UnwrapWindow(info.Holder());
-//   return Integer::New(window->h);
-// }
-// Handle<Value> GetWindowFlags(Local<String> name, const AccessorInfo& info) {
-//   SDL_Window* window = UnwrapWindow(info.Holder());
-//   return Integer::New(window->flags);
-// }
+
+
+
+
 
 
 
