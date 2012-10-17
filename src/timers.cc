@@ -31,7 +31,7 @@ Handle<Value> GetPerformanceCounter(const Arguments& args) {
   return scope.Close(Integer::New(SDL_GetPerformanceCounter()));
 }
 
-Handle<Value> GetPerformaceFrequency(const Arguments& args) {
+Handle<Value> GetPerformanceFrequency(const Arguments& args) {
   HandleScope scope;
 
   if (args.Length() != 0) {

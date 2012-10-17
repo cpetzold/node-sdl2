@@ -15,4 +15,8 @@ Handle<Object> WrapRenderer(SDL_Renderer* renderer);
 SDL_Renderer* UnwrapRenderer(Handle<Object> instance);
 void CreateRendererTemplate();
 
+Handle<Value> SetRenderDrawColor(const Arguments& args);
+Handle<Value> RenderClear(const Arguments& args);
+Handle<Value> RenderPresent(const Arguments& args);
+
 #endif

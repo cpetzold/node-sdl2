@@ -4,6 +4,9 @@ void InitVideo(Handle<Object> target) {
   
   NODE_SET_METHOD(target, "createWindow", CreateWindow);
   NODE_SET_METHOD(target, "createRenderer", CreateRenderer);
+  NODE_SET_METHOD(target, "setRenderDrawColor", SetRenderDrawColor);
+  NODE_SET_METHOD(target, "renderClear", RenderClear);
+  NODE_SET_METHOD(target, "renderPresent", RenderPresent);
 
   target->Set(String::New("INIT_TIMER"), Integer::New(SDL_INIT_TIMER));
   target->Set(String::New("INIT_AUDIO"), Integer::New(SDL_INIT_AUDIO));
@@ -52,7 +55,9 @@ Handle<Value> CreateWindow(const Arguments& args) {
   int flags = args[5]->Int32Value();
 
   SDL_Window* window = SDL_CreateWindow(*title, x, y, w, h, flags);
-
+  if (window == NULL) {
+    return ThrowSDLException(__func__);
+  }
 
   return scope.Close(WrapWindow(window));
 }
@@ -103,6 +108,9 @@ Handle<Value> CreateRenderer(const Arguments& args) {
   int flags = args[2]->Uint32Value();
 
   SDL_Renderer* renderer = SDL_CreateRenderer(window, index, flags);
+  if (renderer == NULL) {
+    return ThrowSDLException(__func__);
+  }
 
   return scope.Close(WrapRenderer(renderer));
 }
@@ -138,8 +146,59 @@ void CreateRendererTemplate() {
   scope.Close(Undefined());
 }
 
+Handle<Value> SetRenderDrawColor(const Arguments& args) {
+  HandleScope scope;
 
+  if (args.Length() != 5 ||
+      !args[0]->IsObject() ||
+      !args[1]->IsInt32() ||
+      !args[2]->IsInt32() ||
+      !args[3]->IsInt32() ||
+      !args[4]->IsInt32()) {
+    return ThrowUsageException("setRenderDrawColor(renderer r, int r, int g, int b, int a)");
+  }
 
+  SDL_Renderer* renderer = UnwrapRenderer(args[0]->ToObject());
+  int r = args[1]->Int32Value();
+  int g = args[2]->Int32Value();
+  int b = args[3]->Int32Value();
+  int a = args[4]->Int32Value();
+
+  if (SDL_SetRenderDrawColor(renderer, r, g, b, a) < 0) {
+    return ThrowSDLException(__func__);
+  }
+
+  return scope.Close(Undefined());
+}
+Handle<Value> RenderClear(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 1 ||
+      !args[0]->IsObject()) {
+    return ThrowUsageException("renderClear(renderer r)");
+  }
+
+  SDL_Renderer* renderer = UnwrapRenderer(args[0]->ToObject());
+
+  if (SDL_RenderClear(renderer) < 0) {
+    return ThrowSDLException(__func__);
+  }
+
+  return scope.Close(Undefined());
+}
+Handle<Value> RenderPresent(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 1 ||
+      !args[0]->IsObject()) {
+    return ThrowUsageException("renderClear(renderer r)");
+  }
+
+  SDL_Renderer* renderer = UnwrapRenderer(args[0]->ToObject());
+  SDL_RenderPresent(renderer);
+
+  return scope.Close(Undefined());
+}
 
 
 
