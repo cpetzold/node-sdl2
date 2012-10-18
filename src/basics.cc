@@ -3,6 +3,7 @@
 void InitBasics(Handle<Object> target) {
   
   NODE_SET_METHOD(target, "init", Init);
+  NODE_SET_METHOD(target, "quit", Quit);
 
   target->Set(String::New("INIT_TIMER"), Integer::New(SDL_INIT_TIMER));
   target->Set(String::New("INIT_AUDIO"), Integer::New(SDL_INIT_AUDIO));
@@ -26,5 +27,17 @@ Handle<Value> Init(const Arguments& args) {
     return ThrowSDLException(__func__);
   }
 
-  return Undefined();
+  return scope.Close(Undefined());
+}
+
+Handle<Value> Quit(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 0) {
+    return ThrowUsageException("quit()");
+  }
+
+  SDL_Quit();
+
+  return scope.Close(Undefined());
 }

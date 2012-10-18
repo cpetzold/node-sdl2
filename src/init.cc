@@ -13,7 +13,7 @@
 extern "C" void init(Handle<Object> target) {
   InitBasics(target);
   InitVideo(target);
-  // InitEvents(target);
+  InitEvents(target);
   // InitAudio(target);
   // InitThreads(target);
   InitTimers(target);

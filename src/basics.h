@@ -6,5 +6,6 @@
 void InitBasics(Handle<Object> target);
 
 Handle<Value> Init(const Arguments& args);
+Handle<Value> Quit(const Arguments& args);
 
 #endif
