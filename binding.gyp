@@ -13,8 +13,20 @@
         'src/video.cc',
         'src/exceptions.cc'
       ],
-      'libraries': [
-        '-framework SDL2'
+      'conditions' : [
+        ['OS == "linux"',{
+          'ldflags': [
+            '<!@(sdl2-config --libs)',
+          ],
+          'cflags': [
+            '<!@(sdl2-config --cflags)'
+          ]
+        }],
+        ['OS == "mac"',{
+          'libraries': [
+            '-framework SDL2'
+          ]
+        }]
       ]
     }
   ]
