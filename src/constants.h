@@ -50,6 +50,12 @@ void InitConstants(Handle<Object> target) {
   target->Set(String::New("USEREVENT"), Integer::New(SDL_USEREVENT));
   target->Set(String::New("WINDOWEVENT"), Integer::New(SDL_WINDOWEVENT));
 
+  target->Set(String::New("BUTTON_LEFT"), Integer::New(SDL_BUTTON_LEFT));
+  target->Set(String::New("BUTTON_MIDDLE"), Integer::New(SDL_BUTTON_MIDDLE));
+  target->Set(String::New("BUTTON_RIGHT"), Integer::New(SDL_BUTTON_RIGHT));
+  target->Set(String::New("BUTTON_X1"), Integer::New(SDL_BUTTON_X1));
+  target->Set(String::New("BUTTON_X2"), Integer::New(SDL_BUTTON_X2));
+
   target->Set(String::New("K_0"), Integer::New(SDLK_0));
   target->Set(String::New("K_1"), Integer::New(SDLK_1));
   target->Set(String::New("K_2"), Integer::New(SDLK_2));
