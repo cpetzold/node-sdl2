@@ -8,30 +8,6 @@ void InitVideo(Handle<Object> target) {
   NODE_SET_METHOD(target, "renderClear", RenderClear);
   NODE_SET_METHOD(target, "renderPresent", RenderPresent);
 
-  target->Set(String::New("INIT_TIMER"), Integer::New(SDL_INIT_TIMER));
-  target->Set(String::New("INIT_AUDIO"), Integer::New(SDL_INIT_AUDIO));
-  target->Set(String::New("INIT_VIDEO"), Integer::New(SDL_INIT_VIDEO));
-  target->Set(String::New("INIT_JOYSTICK"), Integer::New(SDL_INIT_JOYSTICK));
-  target->Set(String::New("INIT_HAPTIC"), Integer::New(SDL_INIT_HAPTIC));
-  target->Set(String::New("INIT_EVERYTHING"), Integer::New(SDL_INIT_EVERYTHING));
-  target->Set(String::New("INIT_NOPARACHUTE"), Integer::New(SDL_INIT_NOPARACHUTE));
-
-  target->Set(String::New("WINDOW_FULLSCREEN"), Integer::New(SDL_WINDOW_FULLSCREEN));
-  target->Set(String::New("WINDOW_OPENGL"), Integer::New(SDL_WINDOW_OPENGL));
-  target->Set(String::New("WINDOW_SHOWN"), Integer::New(SDL_WINDOW_SHOWN));
-  target->Set(String::New("WINDOW_BORDERLESS"), Integer::New(SDL_WINDOW_BORDERLESS));
-  target->Set(String::New("WINDOW_RESIZABLE"), Integer::New(SDL_WINDOW_RESIZABLE));
-  target->Set(String::New("WINDOW_MAXIMIZED"), Integer::New(SDL_WINDOW_MAXIMIZED));
-  target->Set(String::New("WINDOW_MINIMIZED"), Integer::New(SDL_WINDOW_MINIMIZED));
-  target->Set(String::New("WINDOW_INPUT_GRABBED"), Integer::New(SDL_WINDOW_INPUT_GRABBED));
-
-  target->Set(String::New("WINDOWPOS_UNDEFINED"), Integer::New(SDL_WINDOWPOS_UNDEFINED));
-  target->Set(String::New("WINDOWPOS_CENTERED"), Integer::New(SDL_WINDOWPOS_CENTERED));
-
-  target->Set(String::New("RENDERER_SOFTWARE"), Integer::New(SDL_RENDERER_SOFTWARE));
-  target->Set(String::New("RENDERER_ACCELERATED"), Integer::New(SDL_RENDERER_ACCELERATED));
-  target->Set(String::New("RENDERER_PRESENTVSYNC"), Integer::New(SDL_RENDERER_PRESENTVSYNC));
-  target->Set(String::New("RENDERER_TARGETTEXTURE"), Integer::New(SDL_RENDERER_TARGETTEXTURE));
 }
 
 Handle<Value> CreateWindow(const Arguments& args) {

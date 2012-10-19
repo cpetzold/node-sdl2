@@ -4,32 +4,6 @@ void InitEvents(Handle<Object> target) {
   
   NODE_SET_METHOD(target, "pollEvent", PollEvent);
 
-  // target->Set(String::New("ACTIVEEVENT"), Integer::New(SDL_ACTIVEEVENT));
-  target->Set(String::New("DOLLARGESTURE"), Integer::New(SDL_DOLLARGESTURE));
-  target->Set(String::New("DROPFILE"), Integer::New(SDL_DROPFILE));
-  target->Set(String::New("FINGERMOTION"), Integer::New(SDL_FINGERMOTION));
-  target->Set(String::New("FINGERDOWN"), Integer::New(SDL_FINGERDOWN));
-  target->Set(String::New("FINGERUP"), Integer::New(SDL_FINGERUP));
-  target->Set(String::New("KEYDOWN"), Integer::New(SDL_KEYDOWN));
-  target->Set(String::New("KEYUP"), Integer::New(SDL_KEYUP));
-  target->Set(String::New("JOYAXISMOTION"), Integer::New(SDL_JOYAXISMOTION));
-  target->Set(String::New("JOYBALLMOTION"), Integer::New(SDL_JOYBALLMOTION));
-  target->Set(String::New("JOYHATMOTION"), Integer::New(SDL_JOYHATMOTION));
-  target->Set(String::New("MOUSEMOTION"), Integer::New(SDL_MOUSEMOTION));
-  target->Set(String::New("MOUSEBUTTONDOWN"), Integer::New(SDL_MOUSEBUTTONDOWN));
-  target->Set(String::New("MOUSEBUTTONUP"), Integer::New(SDL_MOUSEBUTTONUP));
-  target->Set(String::New("MOUSEWHEEL"), Integer::New(SDL_MOUSEWHEEL));
-  target->Set(String::New("MULTIGESTURE"), Integer::New(SDL_MULTIGESTURE));
-  target->Set(String::New("QUIT"), Integer::New(SDL_QUIT));
-  target->Set(String::New("SYSWMEVENT"), Integer::New(SDL_SYSWMEVENT));
-  target->Set(String::New("TEXTEDITING"), Integer::New(SDL_TEXTEDITING));
-  target->Set(String::New("TEXTINPUT"), Integer::New(SDL_TEXTINPUT));
-  target->Set(String::New("TOUCHBUTTONDOWN"), Integer::New(SDL_TOUCHBUTTONDOWN));
-  target->Set(String::New("TOUCHBUTTONUP"), Integer::New(SDL_TOUCHBUTTONUP));
-  target->Set(String::New("USEREVENT"), Integer::New(SDL_USEREVENT));
-  // target->Set(String::New("VIDEORESIZE"), Integer::New(SDL_VIDEORESIZE));
-  target->Set(String::New("WINDOWEVENT"), Integer::New(SDL_WINDOWEVENT));
-
 }
 
 Handle<Value> PollEvent(const Arguments& args) {

@@ -9,6 +9,7 @@
 #include "threads.h"
 #include "timers.h"
 #include "files.h"
+#include "constants.h"
 
 extern "C" void init(Handle<Object> target) {
   InitBasics(target);
@@ -18,6 +19,7 @@ extern "C" void init(Handle<Object> target) {
   // InitThreads(target);
   InitTimers(target);
   // InitFiles(target);
+  InitConstants(target);
 }
 
 NODE_MODULE(sdl2, init);
