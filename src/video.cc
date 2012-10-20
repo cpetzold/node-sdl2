@@ -7,7 +7,96 @@ void InitVideo(Handle<Object> target) {
   NODE_SET_METHOD(target, "setRenderDrawColor", SetRenderDrawColor);
   NODE_SET_METHOD(target, "renderClear", RenderClear);
   NODE_SET_METHOD(target, "renderPresent", RenderPresent);
+  NODE_SET_METHOD(target, "renderFillRect", RenderFillRect);
 
+}
+
+static Persistent<ObjectTemplate> window_template;
+Handle<Object> WrapWindow(SDL_Window* window) {
+  CreateWindowTemplate();
+
+  HandleScope scope;
+
+  Handle<ObjectTemplate> templ = window_template;
+  Handle<Object> instance = templ->NewInstance();
+  Handle<External> pointer = External::New(window);
+  instance->SetInternalField(0, pointer);
+
+  return scope.Close(instance);
+}
+SDL_Window* UnwrapWindow(Handle<Object> instance) {
+  Handle<External> pointer = Handle<External>::Cast(instance->GetInternalField(0));
+  return static_cast<SDL_Window*>(pointer->Value());
+}
+void CreateWindowTemplate() {
+  if (!window_template.IsEmpty()) return;
+
+  HandleScope scope;
+
+  window_template = Persistent<ObjectTemplate>::New(ObjectTemplate::New());
+  window_template->SetInternalFieldCount(1);
+
+  scope.Close(Undefined());
+}
+
+static Persistent<ObjectTemplate> renderer_template;
+Handle<Object> WrapRenderer(SDL_Renderer* renderer) {
+  CreateRendererTemplate();
+
+  HandleScope scope;
+
+  Handle<ObjectTemplate> templ = renderer_template;
+  Handle<Object> instance = templ->NewInstance();
+  Handle<External> pointer = External::New(renderer);
+  instance->SetInternalField(0, pointer);
+
+  return scope.Close(instance);
+}
+SDL_Renderer* UnwrapRenderer(Handle<Object> instance) {
+  Handle<External> pointer = Handle<External>::Cast(instance->GetInternalField(0));
+  return static_cast<SDL_Renderer*>(pointer->Value());
+}
+void CreateRendererTemplate() {
+  if (!renderer_template.IsEmpty()) return;
+
+  HandleScope scope;
+
+  renderer_template = Persistent<ObjectTemplate>::New(ObjectTemplate::New());
+  renderer_template->SetInternalFieldCount(1);
+
+  scope.Close(Undefined());
+}
+
+static Persistent<ObjectTemplate> rect_template;
+Handle<Object> WrapRect(SDL_Rect* rect) {
+  CreateRectTemplate();
+
+  HandleScope scope;
+
+  Handle<ObjectTemplate> templ = rect_template;
+  Handle<Object> instance = templ->NewInstance();
+  Handle<External> pointer = External::New(rect);
+  instance->SetInternalField(0, pointer);
+
+  return scope.Close(instance);
+}
+SDL_Rect* UnwrapRect(Handle<Object> instance) {
+  SDL_Rect* r = new SDL_Rect;
+  r->x = instance->Get(String::New("x"))->IntegerValue();
+  r->y = instance->Get(String::New("y"))->IntegerValue();
+  r->w = instance->Get(String::New("w"))->IntegerValue();
+  r->h = instance->Get(String::New("h"))->IntegerValue();
+  return r;
+}
+void CreateRectTemplate() {
+  if (!rect_template.IsEmpty()) return;
+
+  HandleScope scope;
+
+  rect_template = Persistent<ObjectTemplate>::New(ObjectTemplate::New());
+  rect_template->SetInternalFieldCount(1);
+
+  scope.Close(Undefined());
 }
 
 Handle<Value> CreateWindow(const Arguments& args) {
@@ -38,37 +127,6 @@ Handle<Value> CreateWindow(const Arguments& args) {
   return scope.Close(WrapWindow(window));
 }
 
-static Persistent<ObjectTemplate> window_template;
-
-Handle<Object> WrapWindow(SDL_Window* window) {
-  CreateWindowTemplate();
-
-  HandleScope scope;
-
-  Handle<ObjectTemplate> templ = window_template;
-  Handle<Object> instance = templ->NewInstance();
-  Handle<External> pointer = External::New(window);
-  instance->SetInternalField(0, pointer);
-
-  return scope.Close(instance);
-}
-
-SDL_Window* UnwrapWindow(Handle<Object> instance) {
-  Handle<External> pointer = Handle<External>::Cast(instance->GetInternalField(0));
-  return static_cast<SDL_Window*>(pointer->Value());
-}
-
-void CreateWindowTemplate() {
-  if (!window_template.IsEmpty()) return;
-
-  HandleScope scope;
-
-  window_template = Persistent<ObjectTemplate>::New(ObjectTemplate::New());
-  window_template->SetInternalFieldCount(1);
-
-  scope.Close(Undefined());
-}
-
 Handle<Value> CreateRenderer(const Arguments& args) {
   HandleScope scope;
 
@@ -91,37 +149,6 @@ Handle<Value> CreateRenderer(const Arguments& args) {
   return scope.Close(WrapRenderer(renderer));
 }
 
-static Persistent<ObjectTemplate> renderer_template;
-
-Handle<Object> WrapRenderer(SDL_Renderer* renderer) {
-  CreateRendererTemplate();
-
-  HandleScope scope;
-
-  Handle<ObjectTemplate> templ = renderer_template;
-  Handle<Object> instance = templ->NewInstance();
-  Handle<External> pointer = External::New(renderer);
-  instance->SetInternalField(0, pointer);
-
-  return scope.Close(instance);
-}
-
-SDL_Renderer* UnwrapRenderer(Handle<Object> instance) {
-  Handle<External> pointer = Handle<External>::Cast(instance->GetInternalField(0));
-  return static_cast<SDL_Renderer*>(pointer->Value());
-}
-
-void CreateRendererTemplate() {
-  if (!renderer_template.IsEmpty()) return;
-
-  HandleScope scope;
-
-  renderer_template = Persistent<ObjectTemplate>::New(ObjectTemplate::New());
-  renderer_template->SetInternalFieldCount(1);
-
-  scope.Close(Undefined());
-}
-
 Handle<Value> SetRenderDrawColor(const Arguments& args) {
   HandleScope scope;
 
@@ -140,12 +167,11 @@ Handle<Value> SetRenderDrawColor(const Arguments& args) {
   int b = args[3]->Int32Value();
   int a = args[4]->Int32Value();
 
-  if (SDL_SetRenderDrawColor(renderer, r, g, b, a) < 0) {
-    return ThrowSDLException(__func__);
-  }
+  int result = SDL_SetRenderDrawColor(renderer, r, g, b, a);
 
-  return scope.Close(Undefined());
+  return scope.Close(Integer::New(result));
 }
+
 Handle<Value> RenderClear(const Arguments& args) {
   HandleScope scope;
 
@@ -156,12 +182,11 @@ Handle<Value> RenderClear(const Arguments& args) {
 
   SDL_Renderer* renderer = UnwrapRenderer(args[0]->ToObject());
 
-  if (SDL_RenderClear(renderer) < 0) {
-    return ThrowSDLException(__func__);
-  }
+  int result = SDL_RenderClear(renderer);
 
-  return scope.Close(Undefined());
+  return scope.Close(Integer::New(result));
 }
+
 Handle<Value> RenderPresent(const Arguments& args) {
   HandleScope scope;
 
@@ -176,7 +201,21 @@ Handle<Value> RenderPresent(const Arguments& args) {
   return scope.Close(Undefined());
 }
 
+Handle<Value> RenderFillRect(const Arguments& args) {
+  HandleScope scope;
 
+  if (args.Length() != 2 ||
+      !args[0]->IsObject() ||
+      !args[1]->IsObject()) {
+    return ThrowUsageException("renderFillRect(renderer r, rect b)");
+  }
 
+  SDL_Renderer* renderer = UnwrapRenderer(args[0]->ToObject());
+  SDL_Rect* rect = UnwrapRect(args[1]->ToObject());
+
+  int result = SDL_RenderFillRect(renderer, rect);
+
+  return scope.Close(Integer::New(result)); 
+}
 
 
