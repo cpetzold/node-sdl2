@@ -1,8 +1,11 @@
 #include "events.h"
+#include "video.h"
 
 void InitEvents(Handle<Object> target) {
   
   NODE_SET_METHOD(target, "pollEvent", PollEvent);
+  NODE_SET_METHOD(target, "showCursor", ShowCursor);
+  NODE_SET_METHOD(target, "warpMouseInWindow", WarpMouseInWindow);
 
 }
 
@@ -74,6 +77,35 @@ Handle<Value> PollEvent(const Arguments& args) {
   return scope.Close(Integer::New(result));
 }
 
+Handle<Value> ShowCursor(const Arguments& args) {
+  HandleScope scope;
 
+  if (args.Length() != 1 ||
+      !args[0]->IsInt32()) {
+    return ThrowUsageException("showCursor(int toggle)");
+  }
 
+  int result = SDL_ShowCursor(args[0]->Int32Value());
+
+  return scope.Close(Integer::New(result));
+}
+
+Handle<Value> WarpMouseInWindow(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 3 ||
+      !args[0]->IsObject() ||
+      !args[1]->IsInt32() ||
+      !args[2]->IsInt32()) {
+    return ThrowUsageException("warpMouseInWindow(window win, int x, int y)");
+  }
+
+  SDL_Window* window = UnwrapWindow(args[0]->ToObject());
+  int x = args[1]->Int32Value();
+  int y = args[2]->Int32Value();
+
+  SDL_WarpMouseInWindow(window, x, y);
+
+  return scope.Close(Undefined());
+}
 
