@@ -24,7 +24,9 @@
         }],
         ['OS == "mac"',{
           'libraries': [
-            '-framework SDL2'
+            '-framework SDL2',
+            '-framework SDL2_ttf',
+            '-framework SDL2_image'
           ]
         }]
       ]

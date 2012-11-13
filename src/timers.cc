@@ -3,6 +3,7 @@
 void InitTimers(Handle<Object> target) {
   
   NODE_SET_METHOD(target, "delay", Delay);
+  NODE_SET_METHOD(target, "getTicks", GetTicks);
   NODE_SET_METHOD(target, "getPerformanceCounter", GetPerformanceCounter);
   NODE_SET_METHOD(target, "getPerformanceFrequency", GetPerformanceFrequency);
 
@@ -19,6 +20,16 @@ Handle<Value> Delay(const Arguments& args) {
   SDL_Delay(args[0]->IntegerValue());
 
   return scope.Close(Undefined());
+}
+
+Handle<Value> GetTicks(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 0) {
+    return ThrowUsageException("getTicks()");
+  }
+
+  return scope.Close(Integer::New(SDL_GetTicks()));
 }
 
 Handle<Value> GetPerformanceCounter(const Arguments& args) {

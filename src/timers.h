@@ -6,6 +6,7 @@
 void InitTimers(Handle<Object> target);
 
 Handle<Value> Delay(const Arguments& args);
+Handle<Value> GetTicks(const Arguments& args);
 Handle<Value> GetPerformanceCounter(const Arguments& args);
 Handle<Value> GetPerformanceFrequency(const Arguments& args);
 

@@ -3,6 +3,7 @@
 void InitVideo(Handle<Object> target) {
   
   NODE_SET_METHOD(target, "createWindow", CreateWindow);
+  NODE_SET_METHOD(target, "setWindowTitle", SetWindowTitle);
   NODE_SET_METHOD(target, "createRenderer", CreateRenderer);
   NODE_SET_METHOD(target, "setRenderDrawColor", SetRenderDrawColor);
   NODE_SET_METHOD(target, "renderClear", RenderClear);
@@ -125,6 +126,23 @@ Handle<Value> CreateWindow(const Arguments& args) {
   }
 
   return scope.Close(WrapWindow(window));
+}
+
+Handle<Value> SetWindowTitle(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() != 2 ||
+      !args[0]->IsObject() ||
+      !args[1]->IsString()) {
+    return ThrowUsageException("setWindowTitle(window win, string title)");
+  }
+
+  SDL_Window* window = UnwrapWindow(args[0]->ToObject());
+  String::Utf8Value title(args[1]);
+
+  SDL_SetWindowTitle(window, *title);
+
+  return scope.Close(Undefined());
 }
 
 Handle<Value> CreateRenderer(const Arguments& args) {

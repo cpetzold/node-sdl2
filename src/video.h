@@ -19,6 +19,7 @@ SDL_Rect* UnwrapRect(Handle<Object> instance);
 void CreateRectTemplate();
 
 Handle<Value> CreateWindow(const Arguments& args);
+Handle<Value> SetWindowTitle(const Arguments& args);
 Handle<Value> CreateRenderer(const Arguments& args);
 Handle<Value> SetRenderDrawColor(const Arguments& args);
 Handle<Value> RenderClear(const Arguments& args);
